@@ -1,0 +1,8 @@
+name: align
+channels:
+  - bioconda
+  - default
+  - conda-forge
+dependencies:
+  - bowtie2
+  - samtools

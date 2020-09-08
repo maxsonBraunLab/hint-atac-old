@@ -1,0 +1,551 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 4
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	trim_galore_pe
+	1
+
+[Mon Sep  7 17:52:46 2020]
+Job 0:  -- Trimming MOLM24D_3 -- 
+
+Activating conda environment: /home/groups/MaxsonLab/kongg/cda7/.snakemake/conda/980e1625
+Path to Cutadapt set as: 'cutadapt' (default)
+Cutadapt seems to be working fine (tested command 'cutadapt --version')
+Cutadapt version: 2.6
+Could not detect version of Python used by Cutadapt from the first line of Cutadapt (but found this: >>>#!/bin/sh<<<)
+Letting the (modified) Cutadapt deal with the Python version instead
+Parallel gzip (pigz) detected. Proceeding with multicore (de)compression using 4 cores
+
+No quality encoding type selected. Assuming that the data provided uses Sanger encoded Phred scores (default)
+
+Using the following FastA file for multiple possible adapter sequences: >/home/groups/MaxsonLab/kongg/cda7/trim_galore.fa<
+Output will be written into the directory: /home/groups/MaxsonLab/kongg/cda7/samples/trim/
+Writing report to '/home/groups/MaxsonLab/kongg/cda7/samples/trim/MOLM24D_3_R1.fastq.gz_trimming_report.txt'
+
+SUMMARISING RUN PARAMETERS
+==========================
+Input filename: samples/raw/MOLM24D_3_R1.fastq.gz
+Trimming mode: paired-end
+Trim Galore version: 0.6.6
+Cutadapt version: 2.6
+Python version: could not detect
+Number of cores used for trimming: 4
+Quality Phred score cutoff: 30
+Quality encoding type selected: ASCII+33
+Adapter sequence: 'file:/home/groups/MaxsonLab/kongg/cda7/trim_galore.fa' (user defined)
+Maximum trimming error rate: 0.1 (default)
+Minimum required adapter overlap (stringency): 1 bp
+Minimum required sequence length for both reads before a sequence pair gets removed: 20 bp
+All sequences will be trimmed by 1 bp on their 3' end to avoid problems with invalid paired-end alignments with Bowtie 1
+Running FastQC on the data once trimming has completed
+Output file(s) will be GZIP compressed
+
+Cutadapt seems to be fairly up-to-date (version 2.6). Setting -j 4
+Writing final adapter and quality trimmed output to MOLM24D_3_R1_trimmed.fq.gz
+
+
+  >>> Now performing quality (cutoff '-q 30') and adapter trimming in a single pass for the adapter sequence: 'file:/home/groups/MaxsonLab/kongg/cda7/trim_galore.fa' from file samples/raw/MOLM24D_3_R1.fastq.gz <<< 
+10000000 sequences processed
+20000000 sequences processed
+30000000 sequences processed
+40000000 sequences processed
+50000000 sequences processed
+This is cutadapt 2.6 with Python 3.7.8
+Command line parameters: -j 4 -e 0.1 -q 30 -O 1 -a file:/home/groups/MaxsonLab/kongg/cda7/trim_galore.fa samples/raw/MOLM24D_3_R1.fastq.gz
+Processing reads on 4 cores in single-end mode ...
+Finished in 879.11 s (17 us/read; 3.45 M reads/minute).
+
+=== Summary ===
+
+Total reads processed:              50,549,640
+Reads with adapters:                42,002,072 (83.1%)
+Reads written (passing filters):    50,549,640 (100.0%)
+
+Total basepairs processed: 5,054,964,000 bp
+Quality-trimmed:             285,366,015 bp (5.6%)
+Total written (filtered):  4,243,095,649 bp (83.9%)
+
+=== Adapter Nextera_XT ===
+
+Sequence: CTGTCTCTTATACACATCT; Type: regular 3'; Length: 19; Trimmed: 26466429 times.
+
+No. of allowed errors:
+0-9 bp: 0; 10-19 bp: 1
+
+Bases preceding removed adapters:
+  A: 15.1%
+  C: 44.2%
+  G: 25.4%
+  T: 15.3%
+  none/other: 0.0%
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+1	5976881	12637410.0	0	5976881
+2	2560457	3159352.5	0	2560457
+3	1120453	789838.1	0	1120453
+4	395367	197459.5	0	395367
+5	320890	49364.9	0	320890
+6	353700	12341.2	0	353700
+7	309784	3085.3	0	309784
+8	293418	771.3	0	293418
+9	298379	192.8	0	296979 1400
+10	305246	48.2	1	291581 13665
+11	333105	12.1	1	321557 11548
+12	292366	3.0	1	282225 10141
+13	324734	0.8	1	312182 12552
+14	355673	0.2	1	339935 15738
+15	352504	0.0	1	336802 15702
+16	358086	0.0	1	341382 16704
+17	342161	0.0	1	326643 15518
+18	311363	0.0	1	297663 13700
+19	354056	0.0	1	335875 18181
+20	314558	0.0	1	299706 14852
+21	389919	0.0	1	370335 19584
+22	521461	0.0	1	499936 21525
+23	157911	0.0	1	153017 4894
+24	353759	0.0	1	338480 15279
+25	321726	0.0	1	309299 12427
+26	372153	0.0	1	355437 16716
+27	390310	0.0	1	372497 17813
+28	370070	0.0	1	354257 15813
+29	363204	0.0	1	349141 14063
+30	353719	0.0	1	340584 13135
+31	262666	0.0	1	254562 8104
+32	376829	0.0	1	363084 13745
+33	278388	0.0	1	270092 8296
+34	339950	0.0	1	328486 11464
+35	344360	0.0	1	331059 13301
+36	382373	0.0	1	367107 15266
+37	353693	0.0	1	340575 13118
+38	322673	0.0	1	311384 11289
+39	314951	0.0	1	304004 10947
+40	267661	0.0	1	259630 8031
+41	280926	0.0	1	271166 9760
+42	264259	0.0	1	255646 8613
+43	286897	0.0	1	277191 9706
+44	250816	0.0	1	243710 7106
+45	262320	0.0	1	254761 7559
+46	278928	0.0	1	270502 8426
+47	265174	0.0	1	257033 8141
+48	253214	0.0	1	245772 7442
+49	198527	0.0	1	193774 4753
+50	169203	0.0	1	165375 3828
+51	168425	0.0	1	164484 3941
+52	188679	0.0	1	183794 4885
+53	150966	0.0	1	147483 3483
+54	170121	0.0	1	166006 4115
+55	170804	0.0	1	166479 4325
+56	142771	0.0	1	139881 2890
+57	141053	0.0	1	137802 3251
+58	134130	0.0	1	131008 3122
+59	120163	0.0	1	117325 2838
+60	96284	0.0	1	94337 1947
+61	92933	0.0	1	90850 2083
+62	72297	0.0	1	70638 1659
+63	51194	0.0	1	50207 987
+64	40561	0.0	1	39745 816
+65	23520	0.0	1	23039 481
+66	17794	0.0	1	17465 329
+67	9754	0.0	1	9578 176
+68	9500	0.0	1	9341 159
+69	7365	0.0	1	7253 112
+70	9849	0.0	1	9677 172
+71	7860	0.0	1	7718 142
+72	8662	0.0	1	8529 133
+73	6272	0.0	1	6163 109
+74	2606	0.0	1	2568 38
+75	440	0.0	1	428 12
+76	163	0.0	1	156 7
+77	224	0.0	1	219 5
+78	154	0.0	1	153 1
+79	219	0.0	1	214 5
+80	76	0.0	1	76
+81	113	0.0	1	111 2
+82	31	0.0	1	31
+83	40	0.0	1	39 1
+84	23	0.0	1	23
+85	19	0.0	1	18 1
+86	11	0.0	1	11
+87	19	0.0	1	19
+88	6	0.0	1	5 1
+89	11	0.0	1	11
+90	5	0.0	1	5
+91	6	0.0	1	5 1
+92	7	0.0	1	7
+93	3	0.0	1	3
+94	1	0.0	1	1
+96	2	0.0	1	2
+97	2	0.0	1	2
+98	5	0.0	1	5
+99	12	0.0	1	12
+100	53	0.0	1	53
+
+
+=== Adapter Nextera_used_by_dan_read1 ===
+
+Sequence: TCGTCGGCAGCGTCAGATGTGTATAAGAGACAG; Type: regular 3'; Length: 33; Trimmed: 6257556 times.
+
+No. of allowed errors:
+0-9 bp: 0; 10-19 bp: 1; 20-29 bp: 2; 30-33 bp: 3
+
+Bases preceding removed adapters:
+  A: 39.9%
+  C: 10.8%
+  G: 0.9%
+  T: 48.4%
+  none/other: 0.0%
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+1	4517525	12637410.0	0	4517525
+2	1506942	3159352.5	0	1506942
+3	192625	789838.1	0	192625
+4	31864	197459.5	0	31864
+5	5256	49364.9	0	5256
+6	584	12341.2	0	584
+7	276	3085.3	0	276
+8	65	771.3	0	65
+9	309	192.8	0	39 270
+10	2003	48.2	1	4 1999
+11	61	12.1	1	1 60
+12	38	3.0	1	0 38
+13	5	0.8	1	0 5
+14	2	0.2	1	0 2
+36	1	0.0	3	1
+
+
+=== Adapter Nextera_used_by_dan_read2 ===
+
+Sequence: GTCTCGTGGGCTCGGAGATGTGTATAAGAGACAG; Type: regular 3'; Length: 34; Trimmed: 9278087 times.
+
+No. of allowed errors:
+0-9 bp: 0; 10-19 bp: 1; 20-29 bp: 2; 30-34 bp: 3
+
+Bases preceding removed adapters:
+  A: 33.5%
+  C: 10.0%
+  G: 30.6%
+  T: 25.9%
+  none/other: 0.0%
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+1	7697316	12637410.0	0	7697316
+2	1172145	3159352.5	0	1172145
+3	255988	789838.1	0	255988
+4	109245	197459.5	0	109245
+5	35061	49364.9	0	35061
+6	5612	12341.2	0	5612
+7	643	3085.3	0	643
+8	118	771.3	0	118
+9	634	192.8	0	42 592
+10	1028	48.2	1	9 1019
+11	218	12.1	1	2 216
+12	61	3.0	1	0 61
+13	15	0.8	1	0 15
+14	3	0.2	1	0 3
+
+RUN STATISTICS FOR INPUT FILE: samples/raw/MOLM24D_3_R1.fastq.gz
+=============================================
+50549640 sequences processed in total
+The length threshold of paired-end sequences gets evaluated later on (in the validation step)
+
+Writing report to '/home/groups/MaxsonLab/kongg/cda7/samples/trim/MOLM24D_3_R2.fastq.gz_trimming_report.txt'
+
+SUMMARISING RUN PARAMETERS
+==========================
+Input filename: samples/raw/MOLM24D_3_R2.fastq.gz
+Trimming mode: paired-end
+Trim Galore version: 0.6.6
+Cutadapt version: 2.6
+Python version: could not detect
+Number of cores used for trimming: 4
+Quality Phred score cutoff: 30
+Quality encoding type selected: ASCII+33
+Adapter sequence: 'file:/home/groups/MaxsonLab/kongg/cda7/trim_galore.fa' (user defined)
+Maximum trimming error rate: 0.1 (default)
+Minimum required adapter overlap (stringency): 1 bp
+Minimum required sequence length for both reads before a sequence pair gets removed: 20 bp
+All sequences will be trimmed by 1 bp on their 3' end to avoid problems with invalid paired-end alignments with Bowtie 1
+Running FastQC on the data once trimming has completed
+Output file(s) will be GZIP compressed
+
+Cutadapt seems to be fairly up-to-date (version 2.6). Setting -j -j 4
+Writing final adapter and quality trimmed output to MOLM24D_3_R2_trimmed.fq.gz
+
+
+  >>> Now performing quality (cutoff '-q 30') and adapter trimming in a single pass for the adapter sequence: 'file:/home/groups/MaxsonLab/kongg/cda7/trim_galore.fa' from file samples/raw/MOLM24D_3_R2.fastq.gz <<< 
+10000000 sequences processed
+20000000 sequences processed
+30000000 sequences processed
+40000000 sequences processed
+50000000 sequences processed
+This is cutadapt 2.6 with Python 3.7.8
+Command line parameters: -j 4 -e 0.1 -q 30 -O 1 -a file:/home/groups/MaxsonLab/kongg/cda7/trim_galore.fa samples/raw/MOLM24D_3_R2.fastq.gz
+Processing reads on 4 cores in single-end mode ...
+Finished in 797.70 s (16 us/read; 3.80 M reads/minute).
+
+=== Summary ===
+
+Total reads processed:              50,549,640
+Reads with adapters:                39,498,101 (78.1%)
+Reads written (passing filters):    50,549,640 (100.0%)
+
+Total basepairs processed: 5,054,964,000 bp
+Quality-trimmed:             581,357,711 bp (11.5%)
+Total written (filtered):  3,941,896,636 bp (78.0%)
+
+=== Adapter Nextera_XT ===
+
+Sequence: CTGTCTCTTATACACATCT; Type: regular 3'; Length: 19; Trimmed: 25377874 times.
+
+No. of allowed errors:
+0-9 bp: 0; 10-19 bp: 1
+
+Bases preceding removed adapters:
+  A: 14.1%
+  C: 41.6%
+  G: 27.7%
+  T: 16.6%
+  none/other: 0.0%
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+1	5065588	12637410.0	0	5065588
+2	2300240	3159352.5	0	2300240
+3	934500	789838.1	0	934500
+4	391157	197459.5	0	391157
+5	321003	49364.9	0	321003
+6	347928	12341.2	0	347928
+7	305478	3085.3	0	305478
+8	302110	771.3	0	302110
+9	288911	192.8	0	287834 1077
+10	311948	48.2	1	301535 10413
+11	289990	12.1	1	282678 7312
+12	344335	3.0	1	333097 11238
+13	330541	0.8	1	321742 8799
+14	379291	0.2	1	366490 12801
+15	359540	0.0	1	348389 11151
+16	380049	0.0	1	367477 12572
+17	345335	0.0	1	335168 10167
+18	323220	0.0	1	313494 9726
+19	382380	0.0	1	369692 12688
+20	346582	0.0	1	336957 9625
+21	277231	0.0	1	270735 6496
+22	339638	0.0	1	330458 9180
+23	341904	0.0	1	331905 9999
+24	342222	0.0	1	332280 9942
+25	380752	0.0	1	368973 11779
+26	411563	0.0	1	398783 12780
+27	365114	0.0	1	355142 9972
+28	405226	0.0	1	393393 11833
+29	349127	0.0	1	340525 8602
+30	271479	0.0	1	265981 5498
+31	337097	0.0	1	329053 8044
+32	325653	0.0	1	317664 7989
+33	320328	0.0	1	313242 7086
+34	350645	0.0	1	341747 8898
+35	389071	0.0	1	376391 12680
+36	374650	0.0	1	364058 10592
+37	364277	0.0	1	354066 10211
+38	330074	0.0	1	320930 9144
+39	332907	0.0	1	322990 9917
+40	293743	0.0	1	285484 8259
+41	310535	0.0	1	301225 9310
+42	293864	0.0	1	285675 8189
+43	246292	0.0	1	240238 6054
+44	296785	0.0	1	288045 8740
+45	251867	0.0	1	245243 6624
+46	264325	0.0	1	256074 8251
+47	290010	0.0	1	280898 9112
+48	199250	0.0	1	194231 5019
+49	209567	0.0	1	203918 5649
+50	188331	0.0	1	183236 5095
+51	197051	0.0	1	191182 5869
+52	186286	0.0	1	181224 5062
+53	161456	0.0	1	157366 4090
+54	180021	0.0	1	175531 4490
+55	145886	0.0	1	142601 3285
+56	170488	0.0	1	165841 4647
+57	199942	0.0	1	195352 4590
+58	80990	0.0	1	79145 1845
+59	106367	0.0	1	104036 2331
+60	97083	0.0	1	94986 2097
+61	80541	0.0	1	78850 1691
+62	78014	0.0	1	76203 1811
+63	52400	0.0	1	51262 1138
+64	32704	0.0	1	32035 669
+65	22394	0.0	1	21914 480
+66	14689	0.0	1	14398 291
+67	12782	0.0	1	12526 256
+68	10593	0.0	1	10362 231
+69	7278	0.0	1	7117 161
+70	8258	0.0	1	8092 166
+71	9684	0.0	1	9471 213
+72	8555	0.0	1	8388 167
+73	6708	0.0	1	6576 132
+74	2501	0.0	1	2450 51
+75	395	0.0	1	373 22
+76	162	0.0	1	143 19
+77	193	0.0	1	182 11
+78	84	0.0	1	77 7
+79	301	0.0	1	275 26
+80	79	0.0	1	68 11
+81	93	0.0	1	86 7
+82	23	0.0	1	20 3
+83	37	0.0	1	27 10
+84	21	0.0	1	18 3
+85	22	0.0	1	12 10
+86	15	0.0	1	9 6
+87	12	0.0	1	6 6
+88	13	0.0	1	7 6
+89	9	0.0	1	7 2
+90	4	0.0	1	3 1
+91	7	0.0	1	7
+92	8	0.0	1	6 2
+93	1	0.0	1	1
+94	1	0.0	1	1
+96	1	0.0	1	1
+97	1	0.0	1	1
+98	1	0.0	1	1
+99	1	0.0	1	1
+100	66	0.0	1	64 2
+
+
+=== Adapter Nextera_used_by_dan_read1 ===
+
+Sequence: TCGTCGGCAGCGTCAGATGTGTATAAGAGACAG; Type: regular 3'; Length: 33; Trimmed: 5689514 times.
+
+No. of allowed errors:
+0-9 bp: 0; 10-19 bp: 1; 20-29 bp: 2; 30-33 bp: 3
+
+Bases preceding removed adapters:
+  A: 39.2%
+  C: 9.8%
+  G: 0.9%
+  T: 49.9%
+  none/other: 0.2%
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+1	4221498	12637410.0	0	4221498
+2	1286049	3159352.5	0	1286049
+3	145633	789838.1	0	145633
+4	27720	197459.5	0	27720
+5	4828	49364.9	0	4828
+6	465	12341.2	0	465
+7	164	3085.3	0	164
+8	52	771.3	0	52
+9	211	192.8	0	25 186
+10	2838	48.2	1	2 2836
+11	46	12.1	1	0 46
+12	8	3.0	1	0 8
+13	2	0.8	1	0 2
+
+
+=== Adapter Nextera_used_by_dan_read2 ===
+
+Sequence: GTCTCGTGGGCTCGGAGATGTGTATAAGAGACAG; Type: regular 3'; Length: 34; Trimmed: 8430713 times.
+
+No. of allowed errors:
+0-9 bp: 0; 10-19 bp: 1; 20-29 bp: 2; 30-34 bp: 3
+
+Bases preceding removed adapters:
+  A: 33.5%
+  C: 8.6%
+  G: 30.9%
+  T: 26.6%
+  none/other: 0.5%
+
+Overview of removed sequences
+length	count	expect	max.err	error counts
+1	6890442	12637410.0	0	6890442
+2	1168175	3159352.5	0	1168175
+3	235371	789838.1	0	235371
+4	103441	197459.5	0	103441
+5	26635	49364.9	0	26635
+6	4162	12341.2	0	4162
+7	387	3085.3	0	387
+8	119	771.3	0	119
+9	546	192.8	0	44 502
+10	1076	48.2	1	15 1061
+11	253	12.1	1	1 252
+12	74	3.0	1	0 74
+13	21	0.8	1	0 21
+14	8	0.2	1	0 8
+15	2	0.0	1	0 2
+60	1	0.0	3	0 0 1
+
+RUN STATISTICS FOR INPUT FILE: samples/raw/MOLM24D_3_R2.fastq.gz
+=============================================
+50549640 sequences processed in total
+The length threshold of paired-end sequences gets evaluated later on (in the validation step)
+
+Validate paired-end files MOLM24D_3_R1_trimmed.fq.gz and MOLM24D_3_R2_trimmed.fq.gz
+file_1: MOLM24D_3_R1_trimmed.fq.gz, file_2: MOLM24D_3_R2_trimmed.fq.gz
+
+
+>>>>> Now validing the length of the 2 paired-end infiles: MOLM24D_3_R1_trimmed.fq.gz and MOLM24D_3_R2_trimmed.fq.gz <<<<<
+Writing validated paired-end Read 1 reads to MOLM24D_3_R1_val_1.fq.gz
+Writing validated paired-end Read 2 reads to MOLM24D_3_R2_val_2.fq.gz
+
+Total number of sequences analysed: 50549640
+
+Number of sequence pairs removed because at least one read was shorter than the length cutoff (20 bp): 6274232 (12.41%)
+
+
+  >>> Now running FastQC on the validated data MOLM24D_3_R1_val_1.fq.gz<<<
+
+Started analysis of MOLM24D_3_R1_val_1.fq.gz
+Approx 5% complete for MOLM24D_3_R1_val_1.fq.gz
+Approx 10% complete for MOLM24D_3_R1_val_1.fq.gz
+Approx 15% complete for MOLM24D_3_R1_val_1.fq.gz
+Approx 20% complete for MOLM24D_3_R1_val_1.fq.gz
+Approx 25% complete for MOLM24D_3_R1_val_1.fq.gz
+Approx 30% complete for MOLM24D_3_R1_val_1.fq.gz
+Approx 35% complete for MOLM24D_3_R1_val_1.fq.gz
+Approx 40% complete for MOLM24D_3_R1_val_1.fq.gz
+Approx 45% complete for MOLM24D_3_R1_val_1.fq.gz
+Approx 50% complete for MOLM24D_3_R1_val_1.fq.gz
+Approx 55% complete for MOLM24D_3_R1_val_1.fq.gz
+Approx 60% complete for MOLM24D_3_R1_val_1.fq.gz
+Approx 65% complete for MOLM24D_3_R1_val_1.fq.gz
+Approx 70% complete for MOLM24D_3_R1_val_1.fq.gz
+Approx 75% complete for MOLM24D_3_R1_val_1.fq.gz
+Approx 80% complete for MOLM24D_3_R1_val_1.fq.gz
+Approx 85% complete for MOLM24D_3_R1_val_1.fq.gz
+Approx 90% complete for MOLM24D_3_R1_val_1.fq.gz
+Approx 95% complete for MOLM24D_3_R1_val_1.fq.gz
+
+  >>> Now running FastQC on the validated data MOLM24D_3_R2_val_2.fq.gz<<<
+
+Started analysis of MOLM24D_3_R2_val_2.fq.gz
+Approx 5% complete for MOLM24D_3_R2_val_2.fq.gz
+Approx 10% complete for MOLM24D_3_R2_val_2.fq.gz
+Approx 15% complete for MOLM24D_3_R2_val_2.fq.gz
+Approx 20% complete for MOLM24D_3_R2_val_2.fq.gz
+Approx 25% complete for MOLM24D_3_R2_val_2.fq.gz
+Approx 30% complete for MOLM24D_3_R2_val_2.fq.gz
+Approx 35% complete for MOLM24D_3_R2_val_2.fq.gz
+Approx 40% complete for MOLM24D_3_R2_val_2.fq.gz
+Approx 45% complete for MOLM24D_3_R2_val_2.fq.gz
+Approx 50% complete for MOLM24D_3_R2_val_2.fq.gz
+Approx 55% complete for MOLM24D_3_R2_val_2.fq.gz
+Approx 60% complete for MOLM24D_3_R2_val_2.fq.gz
+Approx 65% complete for MOLM24D_3_R2_val_2.fq.gz
+Approx 70% complete for MOLM24D_3_R2_val_2.fq.gz
+Approx 75% complete for MOLM24D_3_R2_val_2.fq.gz
+Approx 80% complete for MOLM24D_3_R2_val_2.fq.gz
+Approx 85% complete for MOLM24D_3_R2_val_2.fq.gz
+Approx 90% complete for MOLM24D_3_R2_val_2.fq.gz
+Approx 95% complete for MOLM24D_3_R2_val_2.fq.gz
+Deleting both intermediate output files MOLM24D_3_R1_trimmed.fq.gz and MOLM24D_3_R2_trimmed.fq.gz
+
+====================================================================================================
+
+[Mon Sep  7 18:41:38 2020]
+Finished job 0.
+1 of 1 steps (100%) done

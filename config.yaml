@@ -1,0 +1,36 @@
+# quality control --------------------------------------------------------------------
+FASTQC_SCREEN_CONF: "/home/groups/MaxsonLab/kongg/cda7/fastq_screen.conf"
+SEQUENCER: "not_illumina" # not_illumina or illumina
+ADAPTER: "/home/groups/MaxsonLab/kongg/cda7/trim_galore.fa"
+# if SEQUENCER is illumina, it will trim illumina adapters. Otherwise provide your own.
+# resources: https://github.com/FelixKrueger/TrimGalore/blob/master/Docs/Trim_Galore_User_Guide.md # only version 0.6.6 allows custom fasta file.
+
+# align reads ------------------------------------------------------------------------
+GENOME: "/home/groups/MaxsonLab/indices/GRch38/GCA_000001405.15_GRCh38_no_alt_analysis_set.fasta"
+GENOME_INDEX: "/home/groups/MaxsonLab/indices/GRch38/GCA_000001405.15_GRCh38_no_alt_analysis_set.fna.bowtie_index"
+
+# merge reads ------------------------------------------------------------------------
+# Merge scheme
+# the {sample} wildcard will decompose into {condition}_{replicates}, then
+# {condition}_{replicates,1-3}_transformations.bam becomes {condition}_merged.bam.
+# {cond} can have multiple underscores, but {replicates} must be a number.
+CONDITIONS:
+  - MOLM24D
+  - MOLM24C
+  - MOLM24X
+  # These are names for merged files, which should not contain replicate information, should contain condition info.
+
+REPLICATES: 3 # if replicates are uneven across conditions (e.g. bad library prep), you'll have to modify rules and expected outputs manually.
+
+# call peaks + consensus -----------------------------------------------------------
+ORGANISM: "hg38" # hg38 or mm10
+INTERSECT_COUNT: 2 # find peak intervals with this many number of intersections across your conditions.
+BLACKLIST_FILE: "/home/groups/MaxsonLab/kongg/cda7/Blacklist/lists/hg38-blacklist.v2.bed"
+
+# coneensus scheme
+# an interval file is defined a reference against other peak interval files.
+# by setting INTERSECT_COUNT, we can find intervals that appear in e.g. 2 / 3 conditions, or 3 / 3 conditions.
+
+# footprint analysis ---------------------------------------------------------------
+CONTROL: 
+  - MOLM24D # the control treatment, should be in your conditions.

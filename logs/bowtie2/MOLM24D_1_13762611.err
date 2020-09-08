@@ -1,0 +1,14 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 12
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	bowtie2
+	1
+
+[Mon Sep  7 19:15:21 2020]
+Job 0:   -- Aligning MOLM24D_1 --  
+
+Activating conda environment: /home/groups/MaxsonLab/kongg/cda7/.snakemake/conda/fe7acfee
+slurmstepd: error: *** JOB 13762611 ON exanode-2-11 CANCELLED AT 2020-09-07T19:15:54 ***

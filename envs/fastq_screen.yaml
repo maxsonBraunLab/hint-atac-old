@@ -1,0 +1,60 @@
+name: fastq_screen
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+  - https://conda.anaconda.org/bioconda/linux-64
+  - https://conda.anaconda.org/bioconda/noarch
+  - https://conda.anaconda.org/conda-forge/linux-64
+  - https://conda.anaconda.org/conda-forge/noarch
+  - https://repo.anaconda.com/pkgs/main/linux-64
+  - https://repo.anaconda.com/pkgs/main/noarch
+  - https://repo.anaconda.com/pkgs/free/linux-64
+  - https://repo.anaconda.com/pkgs/free/noarch
+  - https://repo.anaconda.com/pkgs/r/linux-64
+  - https://repo.anaconda.com/pkgs/r/noarch
+  - https://repo.anaconda.com/pkgs/pro/linux-64
+  - https://repo.anaconda.com/pkgs/pro/noarch
+dependencies:
+  - _libgcc_mutex=0.1
+  - bowtie=1.2.2
+  - bowtie2=2.3.5
+  - ca-certificates=2019.6.16
+  - certifi=2019.6.16
+  - expat=2.2.5
+  - fastq-screen=0.13.0
+  - fontconfig=2.13.1
+  - freetype=2.10.0
+  - giflib=5.1.9
+  - icu=64.2
+  - jpeg=9c
+  - libffi=3.2.1
+  - libgcc-ng=9.1.0
+  - libgd=2.2.5
+  - libiconv=1.15
+  - libpng=1.6.37
+  - libstdcxx-ng=9.1.0
+  - libtiff=4.0.10
+  - libuuid=2.32.1
+  - libwebp=1.0.2
+  - libxml2=2.9.9
+  - lz4-c=1.8.3
+  - ncurses=6.1
+  - openssl=1.1.1c
+  - perl=5.26.2
+  - perl-gd=2.71
+  - perl-gdgraph=1.54
+  - perl-gdtextutil=0.86
+  - pip=19.1.1
+  - python=3.6.7
+  - readline=8.0
+  - setuptools=41.0.1
+  - sqlite=3.29.0
+  - tbb=2019.7
+  - tk=8.6.9
+  - wheel=0.33.4
+  - xz=5.2.4
+  - zlib=1.2.11
+  - zstd=1.4.0
+
+

@@ -1,0 +1,11 @@
+name: qc
+channels:
+  - bioconda
+  - default
+  - conda-forge
+dependencies:
+  - trimmomatic
+  - pigz
+  - fastq-screen
+  - bowtie2
+  - bowtie
