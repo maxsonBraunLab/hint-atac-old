@@ -15,19 +15,17 @@ fastq_screen:
   c: 8
   e: logs/fastq_screen/{wildcards.sample}.err
   o: logs/fastq_screen/{wildcards.sample}.out
-fastqc:
-  c: 8
-  e: logs/fastqc/{wildcards.sample}.err
-  o: logs/fastqc/{wildcards.sample}.out
 bowtie2:
   t: '12:00:00'
-  o: logs/bowtie2/{wildcards.sample}_%j.out
-  e: logs/bowtie2/{wildcards.sample}_%j.err
+  o: logs/bowtie2/{rule}_%j.out
+  e: logs/bowtie2/{rule}_%j.err
   c: 12
   mem: 64G
 fragment_length_plot:
-  e: logs/fragment_length_plot/fragment_length_plot.err
+  J: "frag_len"
   o: logs/fragment_length_plot/fragment_length_plot.out
+  e: logs/fragment_length_plot/fragment_length_plot.err
+# when and after merging replicates, start using 'cond' wildcards.
 merge_bams:
   J: merge.{wildcards.cond}
   o: logs/merge_bams/{wildcards.cond}_%j.out
@@ -75,3 +73,7 @@ sort_stats:
   J: sort_stats
   o: logs/sort_stats/sort_stats_%j.out
   e: logs/sort_stats/sort_stats_%j.err
+chip_screen:
+  J: "{wildcards.cond}.{wildcards.chip}"
+  o: "logs/chip_screen/{wildcards.cond}_{wildcards.chip}_%j.out"
+  e: "logs/chip_screen/{wildcards.cond}_{wildcards.chip}_%j.err"

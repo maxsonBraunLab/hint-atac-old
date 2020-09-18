@@ -21,10 +21,12 @@ from datetime import date
 SAMPLE, DIR, = glob_wildcards("samples/raw/{sample}_{dir,R1|R2}.fastq.gz")
 SAMPLE = sorted(set(SAMPLE))
 DIR = sorted(set(DIR))
-# SAMPLE wildcard aggregates condition and replicate.
+# SAMPLE wildcard aggregates condition and replicates.
 
 configfile: "config.yaml"
-localrules: filter_peaks, sort_stats
+localrules: filter_peaks, consensus_intervals, rm_blacklist, fix_motifs, sort_stats
+
+leuk_cells = ["jurkat-hg38", "k-562-hg38", "kasumi-1-hg38", "MOLM-13-hg38"]
 
 rule all:
 	input:
@@ -35,7 +37,7 @@ rule all:
 				"samples/trim/{sample}_R2.fastq.gz_trimming_report.txt"],
 				sample = SAMPLE),
 		expand(["samples/fastq_screen/{sample}_R1_val_1_screen.{ext}",
-				"samples/fastq_screen/{sample}_R2_val_2_screen.{ext}"],
+				"samples/fastq_screen/{sample}_R2_val_2_screen.{ext}"], 
 				sample = SAMPLE, ext = ["html", "txt", "png"]),
 		expand(["samples/fastqc/{sample}_R1_val_1_fastqc.{ext}",
 				"samples/fastqc/{sample}_R2_val_2_fastqc.{ext}"], 
@@ -52,38 +54,27 @@ rule all:
 		"data/macs/consensus_intervals.bed",
 		# footprint + motif match + tracks ------------------------------
 		expand("data/differential/match/{cond}_mpbs.bed", cond = list(config["CONDITIONS"]) ),
+		expand("data/differential/match/fixed/{cond}_mpbs.bed", cond = list(config["CONDITIONS"]) ),
 		expand("data/differential/tracks/{cond}.wig", cond = list(config["CONDITIONS"]) ),
 		# differential chromatin oppenness testing, sort results --------
 		expand("data/differential/diff_pseudocounts/{control}_{case}/{diff_outputs}",
 			control = config["CONTROL"], 
 			case =  list( set(config["CONDITIONS"]) - set(config["CONTROL"]) ),
-			diff_outputs = ["differential_factor.txt", "differential_statistics.txt", "differential_statistics.pdf", "differential_statistics_sorted_filtered.txt"])
+			diff_outputs = ["differential_factor.txt", "differential_statistics.txt", "differential_statistics.pdf", "differential_statistics_sorted_filtered.txt"]),
+		# downstream analysis 
+		expand("data/differential/chipAtlas/{cond}_{chips}.bed", cond = list(config["CONDITIONS"]), chips = leuk_cells)
 
-# snakemake -j 64 --use-conda --rerun-incomplete --latency-wait 60 --cluster-config cluster.yaml --cluster "sbatch -p {cluster.partition} -N {cluster.N}  -t {cluster.t} -o {cluster.o} -e {cluster.e} -J {cluster.J} -c {cluster.c} --mem={cluster.mem}" -s Snakefile 
+# snakemake -j 64 --use-conda --rerun-incomplete --latency-wait 60 --keep-going --cluster-config cluster.json --cluster "sbatch -p {cluster.partition} -N {cluster.N} -o {cluster.o} -e {cluster.e} -t {cluster.t} -J {cluster.J} -c {threads} --mem={cluster.mem}" -s Snakefile
+
+# snakemake -j 64 --use-conda --rerun-incomplete --latency-wait 60 --keep-going --cluster-config cluster.yaml --cluster "sbatch -p {cluster.partition} -N {cluster.N}  -t {cluster.t} -J {cluster.J} -c {cluster.c} --mem={cluster.mem}" -s Snakefile
 
 # quality control -------------------------------------------------------------------------
 if config["SEQUENCER"] == "not_illumina":
-	adapters = "'file:{}'".format(config["ADAPTER"])
+	adapters = "-a 'file:{}'".format(config["ADAPTER"])
 elif config["SEQUENCER"] == "illumina":
 	adapters = "--illumina"
 else:
 	print("Must define sequencer for read trimming: ['not_illumina', 'illumina']. Your input = {}".format(config["SEQUENCER"]))
-
-# rule trim_galore_pe:
-# 	input:
-# 		["samples/raw/{sample}_R1.fastq.gz", "samples/raw/{sample}_R2.fastq.gz"]
-# 	output:
-# 		"samples/trim/{sample}_R1.fastq.gz_trimming_report.txt",
-# 		"samples/trim/{sample}_R2.fastq.gz_trimming_report.txt",
-# 		r1 = "samples/trim/{sample}_R1_val_1.fq.gz",
-# 		r2 = "samples/trim/{sample}_R2_val_2.fq.gz"
-# 	params:
-# 		extra="{} -q 30 --paired --trim1".format(adapters)
-# 	message: " -- Trimming {wildcards.sample} -- "
-# 	log:
-# 		"logs/trim_galore/{sample}.log"
-# 	wrapper:
-# 		"0.65.0/bio/trim_galore/pe"
 
 rule trim_galore_pe:
 	input:
@@ -94,17 +85,16 @@ rule trim_galore_pe:
 		"samples/trim/{sample}_R2.fastq.gz_trimming_report.txt",
 		r1 = "samples/trim/{sample}_R1_val_1.fq.gz",
 		r2 = "samples/trim/{sample}_R2_val_2.fq.gz"
-	params:
-		conf = adapters
 	message: " -- Trimming {wildcards.sample} -- "
 	log:
 		"logs/trim_galore/{sample}.log"
 	conda:
 		"envs/trim_galore.yaml"
+	params:
+		conf = adapters
 	threads: 4
 	shell:
-		"trim_galore --paired -q 30 --trim1 -a {params.conf} -o samples/trim -j {threads} {input.r1} {input.r2} "
-# file contents from /home/groups/MaxsonLab/callahro/adapters/nextera_adapters.fasta
+		"(trim_galore -j {threads} {params.conf} -q 30 --paired --trim1 --paired -o samples/trim {input.r1} {input.r2}) > {log} 2>&1"
 
 rule fastq_screen:
 	input:
@@ -124,8 +114,10 @@ rule fastq_screen:
 		"envs/fastq_screen.yaml"
 	message:
 		" -- Fastq-screening {wildcards.sample} -- "
+	log:
+		"logs/fastq_screen/{sample}.log"
 	shell:
-		"fastq_screen --aligner bowtie2 --conf {params.conf} --outdir samples/fastq_screen --threads {threads} {input.r1} {input.r2}"
+		"(fastq_screen --aligner bowtie2 --conf {params.conf} --outdir samples/fastq_screen --threads {threads} {input.r1} {input.r2}) 2>{log}"
 
 # fastq_screen somehow not working with scheduler.
 
@@ -148,12 +140,19 @@ rule fastqc:
 	shell:
 		"fastqc --outdir samples/fastqc --extract -f fastq {input.r1} {input.r2} -t {threads}"
 
+# rule multiqc:
+# 	input:
+# 		expand("samples/fastqc/{sample}.html", sample=SAMPLE)
+# 	output:
+# 		"data/qc/multiqc_report.html"
+# 	wrapper:
+# 		"0.31.1/bio/multiqc"
+
 # align reads -------------------------------------------------------------------
 rule bowtie2:
 	input:
-		r1 = rules.trim_galore_pe.output.r1,
-		r2 = rules.trim_galore_pe.output.r2,
-		genome = config["GENOME"]
+		fw = rules.trim_galore_pe.output.r1,
+		rv = rules.trim_galore_pe.output.r2
 	output:
 		"samples/align/{sample}.bam"
 	message: "  -- Aligning {wildcards.sample} --  "
@@ -168,7 +167,7 @@ rule bowtie2:
 		--very-sensitive -X 2000 --no-mixed --no-discordant \
 		--mm -p {threads} \
 		-x {params.genome_index} \
-		-1 {input.r1} -2 {input.r2} | samtools view -bS - > {output}) 2> {log}"
+		-1 {input.fw} -2 {input.rv} | samtools view -bS - > {output}) 2> {log}"
 # stdout is the SAM file. stderr is log file.
 # -X 2000 = limit fragment length < 2000bp
 # -no-mixed = 
@@ -238,7 +237,7 @@ rule dedup_collate:
 		"data/logs/samtools_collate_{sample}.log"
 	message: " -- Deduplicating {wildcards.sample} -- "
 	shell:
-		"samtools collate -o {output} {input} > {log} 2>&1"
+		"(samtools collate -o {output} {input}) > {log}"
 
 rule dedup_fixmate:
 	input:
@@ -250,7 +249,7 @@ rule dedup_fixmate:
 	log:
 		"data/logs/samtools_fixmate_{sample}.log"
 	shell:
-		"samtools fixmate -m {input} {output} > {log} 2>&1"
+		"(samtools fixmate -m {input} {output}) > {log}"
 
 rule sort_bams2:
 	input:
@@ -317,12 +316,12 @@ rule merge_bams:
 	message: " -- Merging bam files into {wildcards.cond}. Double check the merge in logs/merge_bams/{wildcards.cond}.txt -- "
 	shell:
 		"""
-		samtools merge -@ {threads} -f {output.bam} {input};
+		samtools merge -@ {threads} -f {output} {input};
 		sleep 10;
-		samtools index {output.bam};
-		echo $(date) 'samtools merge -@ {threads} -f {output.bam} {input}' > {log}
+		samtools index {output};
+		echo $(date) 'samtools merge -@ {threads} -f {output} {input}' > {log}
 		"""
-# if uneven replicates, maybe add: expand("samples/align/quality_align/{{cond,MOLMC}}_{rep}_dedup_rmchrM_quality.bam", rep = list(range(1, 3)) ) 
+# if uneven replicates, maybe add: expand("samples/align/quality_align/{{cond,MOLMC}}{rep}_dedup_rmchrM_quality.bam", rep = list(range(1, 3)) ) 
 # where the {{cond,MOLMC}} uses regex to describe the condition that had less / more than ideal replicates. 
 # Then adjust rule all to match the expected output files.
 
@@ -402,7 +401,7 @@ rule rm_blacklist:
 	conda:
 		"envs/bedtools.yaml"
 	log:
-		"logs/rm_blacklist/rm_blacklist"
+		"logs/rm_blacklist/rm_blacklist.txt"
 	shell:
 		"bedtools intersect -v -a {input.regions} -b {input.bl_file} > {output}"
 
@@ -452,6 +451,16 @@ rule diff_motifs:
 		--input-files {input} 2> {log}"
 # find motifs in said footprints via web scrape of public motif databases.
 
+rule fix_motifs:
+	input:
+		"data/differential/match/{cond}_mpbs.bed"
+	output:
+		"data/differential/match/fixed/{cond}_mpbs.bed"
+	shell:
+		r"sed 's/[\t]*$//' {input} | sed -E 's/MA[0-9.]+([A-Za-z0-9]+)/\1/' > {output}"
+# remove trailing tab from the file. It's an issue for tools like bedtools
+# strip the 'MA[numeric].1' prefix from gene names.
+
 rule footprint_tracks:
 	input:
 		footprint = rules.footprinting.output,
@@ -491,7 +500,7 @@ rule differential:
 	params:
 		outdir = "data/differential/diff_pseudocounts/{control}_{case}",
 		organism = config["ORGANISM"]
-	threads: 12
+	threads: 24
 	conda: 
 		"envs/rgt.yaml"
 	log:
@@ -518,10 +527,33 @@ rule sort_stats:
 	shell:
 		"awk '{{ if ($2 > 1000 && $9 < 0.05) {{print}} }}' {input} | sort -gk9 > {output} 2> {log}"
 
-# snakemake -j 64 --use-conda --rerun-incomplete --latency-wait 60 --cluster-config cluster.yaml --cluster "sbatch -p {cluster.partition} -N {cluster.N}  -t {cluster.t} -o {cluster.o} -e {cluster.e} -J {cluster.J} -c {cluster.c} --mem={cluster.mem}" -s Snakefile 
+# downstream analysis --------------------------------------------------------------------
+
+# see if public ChIP-Atlas resource contains any predicted TF footprints.
+rule chip_screen:
+	input:
+		motifs = rules.fix_motifs.output,
+		chip = config["CHIP_PREFIX"] + "{chip}.bed.gz"
+	output:
+		"data/differential/chipAtlas/{cond}_{chip}.bed"
+	conda:
+		"envs/bedtools.yaml"
+	shell:
+		"bedtools intersect -wa -wb -f 0.50 -a {input.motifs} -b {input.chip} | awk '{{print tolower($0)}}' | awk '$4 ~ $10' > {output}"
+# -wa -wb = write both beds to the output. 
+# -f 0.50 = overlap of interval a to interval b must be 50% or higher.
+# lower-case all content. $4 is putative TF motif (gene name), $10 is gene name of chip-seq data. query if putative motif is 'in' chip-seq data.
+
+# snakemake -j 4 --use-conda --rerun-incomplete --latency-wait 60 --keep-going --cluster-config cluster.yaml --cluster "sbatch -p {cluster.partition} -N {cluster.N}  -t {cluster.t} -o {cluster.o} -e {cluster.e} -J {cluster.J} -c {threads} --mem={cluster.mem}" -s Snakefile 
+
+# development notes --------------------------------------------------------------------
 
 # Test dataset for development: Dan's drug combination project with GSK + ORY + Quizartinib.
 # for i in $(find /home/groups/MaxsonLab/input-data/ATAC/F20FTSUSAT0390_HUMiinR/Clean -name "*24*.gz" | grep -E "24[D|C|X]" | sort); do ln -s $i ${i:82:11}${i:98:3}R${i:101:100}; done
 # ls -1 *R1*.gz | awk -F "_" '{print $2}' | sort | uniq > ID
 # for i in `cat ./ID`; do zcat L*_${i}_*_R1.fq.gz | gzip >/${i}_R1.fastq.gz; done
 # for i in `cat ./ID`; do zcat L*_${i}_*_R2.fq.gz | gzip >/${i}_R2.fastq.gz; done
+
+# in cda7, i renamed samples with a more defined "_" separator. e.g. MOLM24C_1_R1|R2.fastq.gz
+# for i in $(find /home/groups/MaxsonLab/kongg/cda6/samples/raw/ -maxdepth 1 -name "*.gz"); do ln -s $i .; done
+# for i in $(ls *.gz); do mv $i ${i:0:7}_${i:7:1}_${i:9:2}.fastq.gz; done

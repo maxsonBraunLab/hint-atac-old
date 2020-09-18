@@ -1,36 +1,39 @@
 # quality control --------------------------------------------------------------------
-FASTQC_SCREEN_CONF: "/home/groups/MaxsonLab/kongg/cda7/fastq_screen.conf"
+FASTQC_SCREEN_CONF: "config/fastq_screen.conf"
 SEQUENCER: "not_illumina" # not_illumina or illumina
-ADAPTER: "/home/groups/MaxsonLab/kongg/cda7/trim_galore.fa"
-# if SEQUENCER is illumina, it will trim illumina adapters. Otherwise provide your own.
-# resources: https://github.com/FelixKrueger/TrimGalore/blob/master/Docs/Trim_Galore_User_Guide.md # only version 0.6.6 allows custom fasta file.
+ADAPTER: "config/trim_galore.fa"
+# if using illumina adapters, then trim_galore will automatically remove illumina adapters. Otherwise, provide a file to trim custom adapters in fasta format.
+# resources: https://www.bioinformatics.babraham.ac.uk/projects/trim_galore/
 
 # align reads ------------------------------------------------------------------------
-GENOME: "/home/groups/MaxsonLab/indices/GRch38/GCA_000001405.15_GRCh38_no_alt_analysis_set.fasta"
+# path to bowtie2 index
 GENOME_INDEX: "/home/groups/MaxsonLab/indices/GRch38/GCA_000001405.15_GRCh38_no_alt_analysis_set.fna.bowtie_index"
 
 # merge reads ------------------------------------------------------------------------
 # Merge scheme
-# the {sample} wildcard will decompose into {condition}_{replicates}, then
-# {condition}_{replicates,1-3}_transformations.bam becomes {condition}_merged.bam.
+# {condition}{replicates}_transformations.bam --> {condition}_merged.bam
 # {cond} can have multiple underscores, but {replicates} must be a number.
 CONDITIONS:
   - MOLM24D
   - MOLM24C
   - MOLM24X
-  # These are names for merged files, which should not contain replicate information, should contain condition info.
+  # These are names for merged files, and should not contain replicate information Should contain condition info.
 
 REPLICATES: 3 # if replicates are uneven across conditions (e.g. bad library prep), you'll have to modify rules and expected outputs manually.
 
 # call peaks + consensus -----------------------------------------------------------
 ORGANISM: "hg38" # hg38 or mm10
 INTERSECT_COUNT: 2 # find peak intervals with this many number of intersections across your conditions.
-BLACKLIST_FILE: "/home/groups/MaxsonLab/kongg/cda7/Blacklist/lists/hg38-blacklist.v2.bed"
+BLACKLIST_FILE: "Blacklist/lists/hg38-blacklist.v2.bed"
 
-# coneensus scheme
-# an interval file is defined a reference against other peak interval files.
+# consensus scheme
+# open all peak files, sort by position, and merge footprint intervals to get widest interval.
 # by setting INTERSECT_COUNT, we can find intervals that appear in e.g. 2 / 3 conditions, or 3 / 3 conditions.
+# blacklist file comes from encode github repo.
 
-# footprint analysis ---------------------------------------------------------------
+# test differential chromatin openness --------------------------------------------
 CONTROL: 
-  - MOLM24D # the control treatment, should be in your conditions.
+  - MOLM24D # the control treatment, which should be in your conditions. Only one control is allowed.
+
+# screen footprints with chip-atlas ------------------------------------------------
+CHIP_PREFIX: "/home/groups/MaxsonLab/kongg/chip_seq/chipAtlas/post_lift/cleaner/" # point to the dir where ChIP-seq data are stored. Multiple cell lines / types are OK.

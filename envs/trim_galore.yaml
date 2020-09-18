@@ -1,7 +1,6 @@
 name: trim_galore
 channels:
   - bioconda
-  - default
-  - conda-forge
+  - defaults
 dependencies:
-  - trim-galore=0.6.6 # only this version allows multiple adapters to be trimmed by a custom fasta file
+  - trim-galore==0.6.6
