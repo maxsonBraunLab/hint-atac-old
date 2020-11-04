@@ -1,79 +1,79 @@
 ---
 __default__:
-  t: '06:00:00'
-  N: 1
+  time: '06:00:00'
+  nodes: 1
   partition: exacloud
-  J: "{rule}.{wildcards.sample}"
-  o: logs/{rule}/{wildcards.sample}_%j.out
-  e: logs/{rule}/{wildcards.sample}_%j.err
-  c: 4
+  job-name: "{rule}.{wildcards.sample}"
+  output: logs/{rule}/{wildcards.sample}_%j.out
+  error: logs/{rule}/{wildcards.sample}_%j.err
+  cpus-per-task: 4
   mem: 8G
 trim_galore_pe:
-  e: logs/trim_galore/{wildcards.sample}_%j.err
-  o: logs/trim_galore/{wildcards.sample}_%j.out
+  error: logs/trim_galore/{wildcards.sample}_%j.err
+  output: logs/trim_galore/{wildcards.sample}_%j.out
 fastq_screen:
-  c: 8
-  e: logs/fastq_screen/{wildcards.sample}.err
-  o: logs/fastq_screen/{wildcards.sample}.out
+  cpus-per-task: 8
+  error: logs/fastq_screen/{wildcards.sample}.err
+  output: logs/fastq_screen/{wildcards.sample}.out
 bowtie2:
-  t: '12:00:00'
-  o: logs/bowtie2/{rule}_%j.out
-  e: logs/bowtie2/{rule}_%j.err
-  c: 12
+  time: '12:00:00'
+  output: logs/bowtie2/{rule}_%j.out
+  error: logs/bowtie2/{rule}_%j.err
+  cpus-per-task: 12
   mem: 64G
 fragment_length_plot:
-  J: "frag_len"
-  o: logs/fragment_length_plot/fragment_length_plot.out
-  e: logs/fragment_length_plot/fragment_length_plot.err
+  job-name: "frag_len"
+  output: logs/fragment_length_plot/fragment_length_plot.out
+  error: logs/fragment_length_plot/fragment_length_plot.err
 # when and after merging replicates, start using 'cond' wildcards.
 merge_bams:
-  J: merge.{wildcards.cond}
-  o: logs/merge_bams/{wildcards.cond}_%j.out
-  e: logs/merge_bams/{wildcards.cond}_%j.err
+  job-name: merge.{wildcards.cond}
+  output: logs/merge_bams/{wildcards.cond}_%j.out
+  error: logs/merge_bams/{wildcards.cond}_%j.err
 bigwig:
-  J: bw.{wildcards.cond}
-  o: logs/bigwig/{wildcards.cond}_%j.out
-  e: logs/bigwig/{wildcards.cond}_%j.err
-  c: 16
+  job-name: bw.{wildcards.cond}
+  output: logs/bigwig/{wildcards.cond}_%j.out
+  error: logs/bigwig/{wildcards.cond}_%j.err
+  cpus-per-task: 16
 call_peaks:
-  J: peak.{wildcards.cond}
-  o: logs/call_peaks/{wildcards.cond}_%j.out
-  e: logs/call_peaks/{wildcards.cond}_%j.err
+  job-name: peak.{wildcards.cond}
+  output: logs/call_peaks/{wildcards.cond}_%j.out
+  error: logs/call_peaks/{wildcards.cond}_%j.err
 filter_peaks:
-  J: filter_peaks.{wildcards.cond}
-  o: logs/filter_peaks/{wildcards.cond}_%j.out
-  e: logs/filter_peaks/{wildcards.cond}_%j.err
+  job-name: filter_peaks.{wildcards.cond}
+  output: logs/filter_peaks/{wildcards.cond}_%j.out
+  error: logs/filter_peaks/{wildcards.cond}_%j.err
 consensus_interval:
-  J: consensus
-  o: logs/consensus_intervals/consensus_intervals_%j.out
-  e: logs/consensus_intervals/consensus_intervals_%j.err
-  c: 2
+  job-name: consensus
+  output: logs/consensus_intervals/consensus_intervals_%j.out
+  error: logs/consensus_intervals/consensus_intervals_%j.err
+  cpus-per-task: 2
 footprinting:
-  J: foot.{wildcards.cond}
-  o: logs/footprinting/{wildcards.cond}_%j.out
-  e: logs/footprinting/{wildcards.cond}_%j.err
-  c: 16
+  job-name: foot.{wildcards.cond}
+  output: logs/footprinting/{wildcards.cond}_%j.out
+  error: logs/footprinting/{wildcards.cond}_%j.err
+  cpus-per-task: 16
   mem: 32G
 diff_motifs:
-  J: diff_motifs
-  o: logs/diff_motifs/diff_motifs_%j.out
-  e: logs/diff_motifs/diff_motifs_%j.err
+  job-name: diff_motifs
+  output: logs/diff_motifs/diff_motifs_%j.out
+  error: logs/diff_motifs/diff_motifs_%j.err
 footprint_tracks:
-  J: tracks.{wildcards.cond}
-  o: logs/footprint_tracks/{wildcards.cond}_%j.out
-  e: logs/footprint_tracks/{wildcards.cond}_%j.err
+  job-name: tracks.{wildcards.cond}
+  output: logs/footprint_tracks/{wildcards.cond}_%j.out
+  error: logs/footprint_tracks/{wildcards.cond}_%j.err
 differential:
-  J: diff.{wildcards.case}
-  o: logs/differential/diff_{wildcards.control}_{wildcards.case}_%j.out
-  e: logs/differential/diff_{wildcards.control}_{wildcards.case}_%j.err
-  c: 24
+  job-name: diff.{wildcards.case}
+  output: logs/differential/diff_{wildcards.control}_{wildcards.case}_%j.out
+  error: logs/differential/diff_{wildcards.control}_{wildcards.case}_%j.err
+  cpus-per-task: 24
   mem: 32G
-  t: '24:00:00'
+  time: '24:00:00'
 sort_stats:
-  J: sort_stats
-  o: logs/sort_stats/sort_stats_%j.out
-  e: logs/sort_stats/sort_stats_%j.err
+  job-name: sort_stats
+  output: logs/sort_stats/sort_stats_%j.out
+  error: logs/sort_stats/sort_stats_%j.err
 chip_screen:
-  J: "{wildcards.cond}.{wildcards.chip}"
-  o: "logs/chip_screen/{wildcards.cond}_{wildcards.chip}_%j.out"
-  e: "logs/chip_screen/{wildcards.cond}_{wildcards.chip}_%j.err"
+  job-name: "{wildcards.cond}.{wildcards.chip}"
+  output: "logs/chip_screen/{wildcards.cond}_{wildcards.chip}_%j.out"
+  error: "logs/chip_screen/{wildcards.cond}_{wildcards.chip}_%j.err"
