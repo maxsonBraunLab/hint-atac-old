@@ -53,7 +53,7 @@ HINT-ATAC is part of the [Regulatory Genomics Toolbox](http://www.regulatory-gen
 
 # 5. Special instruction: add a pseudo-signal in differential analysis
 
-**This is only applicable if compute_factors function from RGT HINT does not have a pseudo-signal adjustment. Read on if you are confused. **
+**This is only applicable if compute_factors function from RGT HINT does not have a pseudo-signal adjustment. Read on if you are confused.**
 
 In the differential analysis process, reads are counted at custom genomic intervals across many conditions - this is akin to a signal. It is possible that in one condition, the summed signal value is zero. When a logarithm is applied to a zero signal, the code breaks; we have to manually add a pseudo-signal to prevent this from happening. More information about the problem can be found [here](https://github.com/CostaLab/reg-gen/issues/164), and the solution is detailed below.
 
