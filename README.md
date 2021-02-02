@@ -17,7 +17,7 @@ To answer the questions:
 # clone this repo to a new working directory
 git clone git@github.com:maxsonBraunLab/hint-atac.git
 
-# cd into atac_seq-2.0 and make new dir for your FASTQ files
+# cd into atac_seq2 and make new dir for your FASTQ files
 mkdir -p samples/raw
 
 # cd into 'samples/raw' and symlink your FASTQ files
@@ -39,15 +39,51 @@ mamba create -c conda-forge -c bioconda -n snakemake snakemake
 # activate your new conda env
 conda activate snakemake
 
-# install plotly for fragment len dist plot
+# install plotly for QC plots
 conda install -c plotly plotly
 ```
 
-# 3. Prepare RGT environment
+# 3. Configure config.yaml
+
+This file helps define adapter sequences, bowtie2 genome index, conditions, replicates, and more. 
+
+# 4. Prepare RGT environment
 
 HINT-ATAC is part of the [Regulatory Genomics Toolbox](http://www.regulatory-genomics.org/hint/introduction/), and some of its modules need to be locally installed before running the pipeline. Here is the [configuration page](https://www.regulatory-genomics.org/rgt/rgt-data-folder/). Be extra thorough in this step because a lot of subtle things can be missed in this step, which will affect downstream work. Consult a bioinformatician if you are chronically running into trouble.
 
-# 4. Run the pipeline
+# 5. Special instruction: add a pseudo-signal in differential analysis
+
+**This is only applicable if compute_factors function from RGT HINT does not have a pseudo-signal adjustment. Read on if you are confused. **
+
+In the differential analysis process, reads are counted at custom genomic intervals across many conditions - this is akin to a signal. It is possible that in one condition, the summed signal value is zero. When a logarithm is applied to a zero signal, the code breaks; we have to manually add a pseudo-signal to prevent this from happening. More information about the problem can be found [here](https://github.com/CostaLab/reg-gen/issues/164), and the solution is detailed below.
+
+1. Run the command `snakemake -j 1 --use-conda --conda-create-envs-only` to install the conda environments. 
+
+2. cd into .snakemake/conda and search for the environment that houses the RGT packages with `grep "rgt" *.yaml` to get a hash. 
+
+3. Given the hash (likely db877624), cd into that hash with: `cd db877624/lib/python3.7/site-packages/rgt/HINT`.
+
+4. Open the the differential analysis file with `vi DifferentialAnalysis.py`, locate the compute_factors function, and change the code from this:
+
+   ```python
+   def compute_factors(signals):
+       signals = np.sum(signals, axis=2)
+       signals_log = np.log(signals)
+       ...
+   ```
+
+   to this
+
+   ```python
+   def compute_factors(signals):
+       signals = np.sum(signals, axis=2)
+       signals_log = np.log(signals + 0.01)
+       ...
+   ```
+
+5. Save and exit the file (please Google vi instructions). If your code already contains the crucial 'signals + 0.01' part, then go on to the next part. 
+
+# 6. Run the pipeline
 
 You can run the pipeline using an interactive node like this:
 
@@ -70,22 +106,21 @@ You can run the pipeline via batch mode like this:
 snakemake -j 64 --use-conda --rerun-incomplete --latency-wait 60 --cluster-config cluster.yaml --cluster "sbatch -p {cluster.partition} -N {cluster.N}  -t {cluster.t} -J {cluster.J} -c {cluster.c} --mem={cluster.mem}" -s Snakefile
 ```
 
-This will submit up to 64 jobs to exacloud servers and is appropriate for running computationally-intensive programs in parallel (read aligning, peak calling, footprinting, calculating differentially open chromatin  regions). You may want to interchange `cluster.yaml` with `cluster.json` if one is not working, and you may track your jobs in a separate terminal with `watch squeue -u $(whoami)`.
+This will submit up to 64 jobs to exacloud servers and is appropriate for running computationally-intensive programs in parallel (read aligning, peak calling, footprinting, calculating differentially open chromatin  regions).
 
 # Pipeline Summary
 
 ## Assumptions
 
-* Reads are paired-end from ATAC-Seq libraries. 
-* Equal number of replicates per conditions (although can manually modify script to accommodate this).
+* Symlinks or files are formatted like this: `{condition}_{replicate}_{R1|R2}.fastq.gz`
+* Reads are paired-end from ATAC-Seq libraries
+* Equal number of replicates per conditions (although can manually modify script to accommodate this)
 
 ## Inputs
 
-- Reads in this specific format: 
+- Reads in this specific format: `{condition}_{replicate}_{dir}.fastq.gz`
 
-  {condition}\_{replicate}_{dir}.fastq.gz
-
-  - `Condition` = experimental treatment such as: 'MOLM24D',  'SETBP1_CSF3R_Mutant' , 'SETBP1_CSF3R_Control_8hr'. Multiple  underscores, text / number mixing is OK.
+  - `Condition` = experimental treatment such as: 'MOLM24D',  'SETBP1_CSF3R_Mutant' , 'SETBP1_CSF3R_Control_8hr'. Multiple  underscores, text and number mixing is OK.
   - `Replicate` = biological replicate. acceptable values are integers >= 1.
   - `Dir` = read direction. Acceptable values are ['R1', 'R2'].
   - Reads must be symlinked in the `samples/raw` directory.
@@ -125,9 +160,6 @@ This will submit up to 64 jobs to exacloud servers and is appropriate for runnin
 
 ## Notes
 
-* Smoother integration with sbatch is in the works. If you're having trouble, run the pipeline interactively for 1 minute, cancel it, then re-submit in batch mode. Janky, I know. 
-* PCA to assess biological replicate correlation is in the works.
-* Fraction of Reads in Peaks (FRIP) per sample is in the works.
 * Pipeline takes about 6 hours to run for 9 samples.
 
 # References

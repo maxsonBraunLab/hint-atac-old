@@ -2,15 +2,15 @@
 # Thanks to Rowan Callahan, Jake Van Campen, and Joey Estabrook, for their code.
 
 # How to use
-# 1. Symlink your raw sequencing files into samples/raw.
-# 2. Merge your sequencing files by lane, if applicable, before starting the pipeline.
+# 1. Symlink your PE raw sequencing files into samples/raw. 
+# 2. Rename symlinks to follow the format: {condition}_{replicate}_{R1|R2}.fastq.gz
 
 # Assumptions
-# Raw files in the format: "{cond}{replicate}_{R1|R2}.fastq.gz" e.g. MOLMD1_R1.fastq.gz where MOLMD is cond and 1 is replicate.
-# Replicate ID (if a number) must not be next to another number. So be extra careful if time-series data.
+# Raw files in the format: "{condition}_{replicate}_{R1|R2}.fastq.gz" e.g. MOLMD_1_R1.fastq.gz where MOLMD is cond and 1 is replicate.
 # Same number of replicates for all conditions.
 # Paired-end sequencing.
 # You've installed RGT to your user directory and configured genomic data for your organism.
+# You've added the pseudocount in DifferentialAnalysis.py
 
 import os
 import glob
@@ -316,10 +316,9 @@ rule merge_bams:
 	message: " -- Merging bam files into {wildcards.cond}. Double check the merge in logs/merge_bams/{wildcards.cond}.txt -- "
 	shell:
 		"""
-		samtools merge -@ {threads} -f {output} {input};
-		sleep 10;
-		samtools index {output};
-		echo $(date) 'samtools merge -@ {threads} -f {output} {input}' > {log}
+		samtools merge -@ {threads} -f {output.bam} {input};
+		samtools index {output.bam};
+		echo $(date) 'samtools merge -@ {threads} -f {output.bam} {input}' > {log}
 		"""
 # if uneven replicates, maybe add: expand("samples/align/quality_align/{{cond,MOLMC}}{rep}_dedup_rmchrM_quality.bam", rep = list(range(1, 3)) ) 
 # where the {{cond,MOLMC}} uses regex to describe the condition that had less / more than ideal replicates. 
@@ -350,7 +349,7 @@ else:
 
 rule call_peaks:
 	input:
-		rules.merge_bams.output
+		rules.merge_bams.output.bam
 	output:
 		"data/macs/{cond}_peaks.broadPeak"
 	params:
@@ -543,17 +542,3 @@ rule chip_screen:
 # -wa -wb = write both beds to the output. 
 # -f 0.50 = overlap of interval a to interval b must be 50% or higher.
 # lower-case all content. $4 is putative TF motif (gene name), $10 is gene name of chip-seq data. query if putative motif is 'in' chip-seq data.
-
-# snakemake -j 4 --use-conda --rerun-incomplete --latency-wait 60 --keep-going --cluster-config cluster.yaml --cluster "sbatch -p {cluster.partition} -N {cluster.N}  -t {cluster.t} -o {cluster.o} -e {cluster.e} -J {cluster.J} -c {threads} --mem={cluster.mem}" -s Snakefile 
-
-# development notes --------------------------------------------------------------------
-
-# Test dataset for development: Dan's drug combination project with GSK + ORY + Quizartinib.
-# for i in $(find /home/groups/MaxsonLab/input-data/ATAC/F20FTSUSAT0390_HUMiinR/Clean -name "*24*.gz" | grep -E "24[D|C|X]" | sort); do ln -s $i ${i:82:11}${i:98:3}R${i:101:100}; done
-# ls -1 *R1*.gz | awk -F "_" '{print $2}' | sort | uniq > ID
-# for i in `cat ./ID`; do zcat L*_${i}_*_R1.fq.gz | gzip >/${i}_R1.fastq.gz; done
-# for i in `cat ./ID`; do zcat L*_${i}_*_R2.fq.gz | gzip >/${i}_R2.fastq.gz; done
-
-# in cda7, i renamed samples with a more defined "_" separator. e.g. MOLM24C_1_R1|R2.fastq.gz
-# for i in $(find /home/groups/MaxsonLab/kongg/cda6/samples/raw/ -maxdepth 1 -name "*.gz"); do ln -s $i .; done
-# for i in $(ls *.gz); do mv $i ${i:0:7}_${i:7:1}_${i:9:2}.fastq.gz; done

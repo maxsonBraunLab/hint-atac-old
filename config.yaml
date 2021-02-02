@@ -11,7 +11,7 @@ GENOME_INDEX: "/home/groups/MaxsonLab/indices/GRch38/GCA_000001405.15_GRCh38_no_
 
 # merge reads ------------------------------------------------------------------------
 # Merge scheme
-# {condition}{replicates}_transformations.bam --> {condition}_merged.bam
+# {condition}_{replicates}_transformations.bam --> {condition}_merged.bam
 # {cond} can have multiple underscores, but {replicates} must be a number.
 CONDITIONS:
   - MOLM24D
